@@ -1,5 +1,4 @@
 search-engine/node_modules/*
-flutter_app/ios/*
 flutter_app/linux/*
 flutter_app/android/build/
 flutter_app/android/gradle/
