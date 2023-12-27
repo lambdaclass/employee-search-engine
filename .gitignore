@@ -10,3 +10,4 @@ flutter_app/packages
 flutter_app/pubspec.yaml
 search-engine/img/*
 .vscode/
+flutter_app/.env
