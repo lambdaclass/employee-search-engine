@@ -1,6 +1,6 @@
 # LambdaClass Employee Search Engine
 
-By passing a picture of a person this program returns you the LambdaClass employee more similar to.
+A Flutter application that returns the LambdaClass employee closest to the picture you take.
 
 ## Run Docker
 

@@ -1,0 +1,15 @@
+{
+  "name": "search-engine",
+  "version": "1.0.0",
+  "description": "LambdaClass employee search engine",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jordi Bonet and Antonio Calvin",
+  "license": "ISC",
+  "dependencies": {
+    "weaviate-ts-client": "^2.0.0"
+  }
+}
