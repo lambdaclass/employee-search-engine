@@ -13,5 +13,6 @@ docker-compose up -d
 
 ```bash
 cd employee-search-engine
+npm install
 node index.js
 ```
