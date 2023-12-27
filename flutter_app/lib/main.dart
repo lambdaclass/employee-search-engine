@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _sendImageToEndpoint(String base64Image) async {
     print("VOY A ENVIAR UNA PETICION");
-    const endpointUrl = 'http://192.168.1.2:3000/process-image';
+    const endpointUrl = 'http://172.40.3.240:3000/process-image';
 
     try {
       final response = await http.post(
@@ -69,13 +69,38 @@ class _MyHomePageState extends State<MyHomePage> {
       print('Response: ${response}');
       if (response.statusCode == 200) {
         print('Image sent successfully');
-        print('Server response: ${response.body}');
+        String base64ServerImage = jsonDecode(response.body)["processedImage"];
+        await _loadImageFromServer(base64ServerImage);
       } else {
         print(
             'Image send failed. Server responded with ${response.statusCode}');
       }
     } catch (error) {
       print('Error sending image: $error');
+    }
+  }
+
+  Future<void> _loadImageFromServer(String base64Image) async {
+    try {
+      // Limpiar la cadena base64 eliminando espacios en blanco al principio y al final
+      final cleanedBase64 = base64Image.trim();
+
+      final bytes = base64Decode(cleanedBase64);
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/logs/respuesta_image.jpg');
+
+      // Crea el directorio si no existe
+      await Directory('${directory.path}/logs/').create(recursive: true);
+
+      // Escribe la imagen en el archivo
+      await file.writeAsBytes(bytes);
+      print('Image from server written to file: ${file.path}');
+
+      setState(() {
+        _image = file;
+      });
+    } catch (e) {
+      print('Error loading image from server: $e');
     }
   }
 
