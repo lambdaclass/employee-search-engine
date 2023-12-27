@@ -1,11 +1,6 @@
 search-engine/node_modules/*
-flutter_app/ios/Pods/
-flutter_app/ios/Runner.xcworkspace/
-flutter_app/ios/Flutter/Generated.xcconfig
-flutter_app/ios/Flutter/App.framework/
-flutter_app/ios/Flutter/Flutter.framework/
-flutter_app/ios/Flutter/Flutter.podspec
-flutter_app/ios/Flutter/flutter_assets/
+flutter_app/ios/*
+flutter_app/linux/*
 flutter_app/android/build/
 flutter_app/android/gradle/
 flutter_app/build/
