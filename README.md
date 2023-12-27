@@ -9,6 +9,11 @@ cd employee-search-engine
 docker-compose up -d
 ```
 
+## Install dependencies 
+```bash
+npm install
+```
+
 ## Run App
 
 ```bash
