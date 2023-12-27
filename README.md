@@ -9,10 +9,14 @@ cd employee-search-engine
 docker-compose up -d
 ```
 
+## Install dependencies 
+```bash
+npm install
+```
+
 ## Run App
 
 ```bash
 cd employee-search-engine
-npm install
 node index.js
 ```
