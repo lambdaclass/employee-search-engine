@@ -1,4 +1,4 @@
-import { client } from "./app.js";
+import app, { client } from "./app.js";
 
 import { readFileSync, readdirSync, writeFileSync} from "fs"
 
@@ -97,4 +97,52 @@ async function handleErrorInCreateSchema() {
 
 await handleErrorInCreateSchema();
 await trainAllLocalImages()
-await test()
+// await test()
+
+app.post('/train-vector', async (req, res) => {
+    try {
+        const { image } = req.body;
+        const { text } = req.body;
+
+        const result = await client.data
+            .creator()
+            .withClassName('Employee')
+            .withProperties({
+                image: image,
+                text: text,
+            })
+            .do();
+
+        res.json({ message: "OK" });
+    } catch (error) {
+        console.error('Error while processing the image:', error);
+        res.status(500).json({ error: 'Error while processing the image' });
+    }
+});
+
+app.post('/process-image', async (req, res) => {
+    try {
+        const { image } = req.body;
+
+        //console.log(image)
+
+        const processedImage = await client.graphql.get()
+            .withClassName('Employee')
+            .withFields(['image'])
+            .withNearImage({ image: image })
+            .withLimit(1)
+            .do();
+
+        const result = processedImage.data.Get.Employee[0].image;
+        // writeFileSync('./result.jpg', result, 'base64');
+        res.json({ processedImage: result });
+    } catch (error) {
+        console.error('Error while processing the image:', error);
+        res.status(500).json({ error: 'Error while processing the image' });
+    }
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Listening ${PORT}`);
+});
