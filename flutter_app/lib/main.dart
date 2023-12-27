@@ -49,44 +49,24 @@ class _MyHomePageState extends State<MyHomePage> {
       final bytes = await _image!.readAsBytes();
       final base64Image = base64Encode(bytes);
 
-      await _logBase64ImageToFile(base64Image);
-
       // Send the base64-encoded image to the endpoint
       await _sendImageToEndpoint(base64Image);
     }
   }
 
-  Future<void> _logBase64ImageToFile(String base64Image) async {
-    try {
-      // Get the documents directory
-      final appDocumentsDirectory = await getApplicationDocumentsDirectory();
-
-      // Relative path within the documents directory
-      final relativePath = 'logs/base64_image_log.txt';
-      final filePath = '${appDocumentsDirectory.path}/$relativePath';
-
-      final file = File(filePath);
-
-      // Ensure the directory exists
-      await file.parent.create(recursive: true);
-
-      // Write the base64-encoded image to the file
-      await file.writeAsString(base64Image);
-      print("Base64-encoded image logged to $filePath");
-    } catch (e) {
-      print("Error writing to file: $e");
-    }
-  }
-
   Future<void> _sendImageToEndpoint(String base64Image) async {
-    final endpointUrl = 'YOUR_ENDPOINT_URL';
+    print("VOY A ENVIAR UNA PETICION");
+    const endpointUrl = 'http://192.168.1.2:3000/process-image';
 
     try {
       final response = await http.post(
         Uri.parse(endpointUrl),
-        body: {'image': base64Image},
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'image': base64Image}),
       );
-
+      print('Response: ${response}');
       if (response.statusCode == 200) {
         print('Image sent successfully');
         print('Server response: ${response.body}');
