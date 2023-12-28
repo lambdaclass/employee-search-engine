@@ -11,3 +11,13 @@ flutter_app/pubspec.yaml
 search-engine/img/*
 .vscode/
 flutter_app/.env
+flutter_app/macos
+
+# iOS
+flutter_app/ios/Pods/
+flutter_app/ios/Runner.xcworkspace/
+flutter_app/ios/Flutter/Generated.xcconfig
+flutter_app/ios/Flutter/App.framework/
+flutter_app/ios/Flutter/Flutter.framework/
+flutter_app/ios/Flutter/Flutter.podspec
+flutter_app/ios/Flutter/flutter_assets/

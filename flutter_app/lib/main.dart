@@ -1,10 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
@@ -19,7 +17,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final serverIp = dotenv.env['SERVER_IP'] ?? '127.0.0.1';
     final endpointUrl = 'http://$serverIp:3000/process-image';
-
     return MaterialApp(
       title: 'Image Picker Demo',
       theme: ThemeData(
@@ -43,6 +40,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   File? _image;
+  Image? _serverImage;
 
   Future<void> _getImage() async {
     final pickedFile =
@@ -51,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        _serverImage = null; // Reinicia la imagen del servidor al elegir una nueva imagen
       });
 
       // Convert the image to base64
@@ -77,6 +76,15 @@ class _MyHomePageState extends State<MyHomePage> {
       if (response.statusCode == 200) {
         print('Image sent successfully');
         print('Server response: ${response.body}');
+
+        // Extrae la cadena base64 de la imagen desde la respuesta JSON
+        final jsonResponse = jsonDecode(response.body);
+        final processedImageBase64 = jsonResponse['processedImage'];
+
+        // Decodifica la imagen en base64 y la muestra
+        setState(() {
+          _serverImage = Image.memory(base64Decode(processedImageBase64));
+        });
       } else {
         print(
             'Image send failed. Server responded with ${response.statusCode}');
@@ -86,16 +94,41 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: _image == null
-            ? const Text('No image selected.')
-            : Image.file(_image!),
+      body: SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+            AspectRatio(
+              aspectRatio: 1.0, // Proporción de aspecto cuadrado para _image
+              child: Center(
+                child: _image == null
+                    ? const Text('No image selected.')
+                    : Image.file(_image!),
+              ),
+            ),
+            const SizedBox(height: 20),
+            AspectRatio(
+              aspectRatio: 1.0, // Proporción de aspecto cuadrado para _serverImage
+              child: Center(
+                child: _serverImage == null
+                    ? const Text('No processed image.')
+                    : Container(
+                        width: double.infinity,
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: _serverImage!,
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _getImage,
