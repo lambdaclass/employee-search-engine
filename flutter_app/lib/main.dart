@@ -228,13 +228,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
-                              'Your photo:',
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            const Text('Your photo:',
+                                style: TextStyle(fontSize: 16.0)),
                             const SizedBox(height: 8),
                             Expanded(
                               child: Image.file(_image!),
@@ -248,34 +243,29 @@ class _MyHomePageState extends State<MyHomePage> {
             AspectRatio(
               aspectRatio: 1.0,
               child: Center(
-                child: _serverImage == null
-                    ? const SizedBox(height: 20)
-                    : Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'You are this employee of LambdaClass:',
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Expanded(
-                              child: Container(
-                                width: double.infinity,
-                                child: FittedBox(
-                                  fit: BoxFit.contain,
-                                  child: _serverImage!,
+                  child: _serverImage == null
+                      ? const SizedBox(height: 20)
+                      : Container(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                  'You are this employee of LambdaClass:',
+                                  style: TextStyle(fontSize: 16.0)),
+                              const SizedBox(height: 8),
+                              Expanded(
+                                child: Container(
+                                  width: double.infinity,
+                                  child: FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: _serverImage!,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-              ),
+                            ],
+                          ),
+                        )),
             ),
           ],
         ),
