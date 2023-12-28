@@ -200,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Text(
-                                  'You are this LambdaClass employee:',
+                                  'You are this employee of LambdaClass:',
                                   style: TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold)),
