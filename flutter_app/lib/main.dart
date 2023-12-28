@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 
@@ -13,20 +15,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final serverIp = dotenv.env['SERVER_IP'] ?? '127.0.0.1';
+    final endpointUrl = 'http://$serverIp:3000/process-image';
     return MaterialApp(
       title: 'Image Picker Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Image Picker Demo'),
+      home: MyHomePage(title: 'Image Picker Demo', endpointUrl: endpointUrl),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title, required this.endpointUrl})
+      : super(key: key);
 
   final String title;
+  final String endpointUrl;
 
   @override
   createState() => _MyHomePageState();
@@ -57,11 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _sendImageToEndpoint(String base64Image) async {
     print("VOY A ENVIAR UNA PETICION");
-    const endpointUrl = 'http://172.40.2.3:3000/process-image';
 
     try {
       final response = await http.post(
-        Uri.parse(endpointUrl),
+        Uri.parse(widget.endpointUrl),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
