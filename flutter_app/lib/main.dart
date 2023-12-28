@@ -190,9 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text('Your photo:',
-                                style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold)),
+                                style: TextStyle(fontSize: 16.0)),
                             const SizedBox(height: 8),
                             Expanded(
                               child: Image.file(_image!),
@@ -215,9 +213,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             children: [
                               const Text(
                                   'You are this employee of LambdaClass:',
-                                  style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.bold)),
+                                  style: TextStyle(fontSize: 16.0)
+                                ),
                               const SizedBox(height: 8),
                               Expanded(
                                 child: Container(
@@ -235,8 +232,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           FloatingActionButton(
             onPressed: _getImage,
@@ -245,6 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: const Color(0xFFB3D334),
             child: const Icon(Icons.add_a_photo),
           ),
+          const SizedBox(height: 16.0),  // Ajusta el espacio entre los botones
           FloatingActionButton(
             onPressed: () {
               // Add the logic for _trainVector
