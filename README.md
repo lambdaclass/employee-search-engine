@@ -23,7 +23,7 @@ You also need to have your phone and your computer connected to the same network
 ### Run Weaviate (Docker)
 
 ```bash
-cd employee-search-engine
+cd search-engine
 docker-compose up -d
 ```
 
@@ -31,13 +31,14 @@ docker-compose up -d
 
 #### Install dependencies
 ```bash
+cd search-engine
 npm install
 ```
 
 #### Run the NodeJS App
 
 ```bash
-cd employee-search-engine
+cd search-engine
 node index.js
 ```
 
