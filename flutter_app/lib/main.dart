@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _loadTheme() async {
     _themeData = await ThemeManager.getTheme();
-    setState(() {}); // Actualiza el estado para que se aplique el tema
+    setState(() {});
   }
 
   @override
@@ -130,7 +130,17 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
        appBar: AppBar(
-        title: Text(widget.title),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/lc_logo.png',
+              width: 40,
+              height: 40,
+            ),
+            const SizedBox(width: 8), // Espacio entre la imagen y el título
+            Text(widget.title),
+          ],
+        ),
         actions: [
           Switch(
             value: Theme.of(context).brightness == Brightness.dark,
