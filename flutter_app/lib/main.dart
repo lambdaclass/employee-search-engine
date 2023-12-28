@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
+
 import 'package:employee_search_engine/api_service.dart';
 import 'package:employee_search_engine/theme_manager.dart';
 import 'package:flutter/material.dart';
@@ -87,14 +87,53 @@ class _MyHomePageState extends State<MyHomePage> {
   Image? _serverImage;
 
   Future<void> _showModal(String message) async {
-    await showModalBottomSheet(
+    return showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            message,
-            style: const TextStyle(fontSize: 18.0),
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          elevation: 0.0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Information',
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFFB3D334),
+                  ),
+                ),
+                const SizedBox(height: 10.0),
+                Text(
+                  message,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10.0),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: const Color(0xFFB3D334),
+                  ),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -158,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
               width: 40,
               height: 40,
             ),
-            const SizedBox(width: 8), // Espacio entre la imagen y el título
+            const SizedBox(width: 8), // Space between image and title
             Text(
               widget.title,
               style:
@@ -189,10 +228,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text('Your photo:',
-                                style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold)),
+                            const Text(
+                              'Your photo:',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             const SizedBox(height: 8),
                             Expanded(
                               child: Image.file(_image!),
@@ -206,31 +248,34 @@ class _MyHomePageState extends State<MyHomePage> {
             AspectRatio(
               aspectRatio: 1.0,
               child: Center(
-                  child: _serverImage == null
-                      ? const SizedBox(height: 20)
-                      : Container(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                  'You are this employee of LambdaClass:',
-                                  style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.bold)),
-                              const SizedBox(height: 8),
-                              Expanded(
-                                child: Container(
-                                  width: double.infinity,
-                                  child: FittedBox(
-                                    fit: BoxFit.contain,
-                                    child: _serverImage!,
-                                  ),
+                child: _serverImage == null
+                    ? const SizedBox(height: 20)
+                    : Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'You are this employee of LambdaClass:',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Expanded(
+                              child: Container(
+                                width: double.infinity,
+                                child: FittedBox(
+                                  fit: BoxFit.contain,
+                                  child: _serverImage!,
                                 ),
                               ),
-                            ],
-                          ),
-                        )),
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
             ),
           ],
         ),
@@ -247,7 +292,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           FloatingActionButton(
             onPressed: () {
-              // Add the logic for _trainVector
               _trainVector();
             },
             tooltip: 'Train Vector',
