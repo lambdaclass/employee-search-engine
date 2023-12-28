@@ -47,7 +47,7 @@ class ApiService {
     }
   }
 
-  Future<void> sendImageToTrainVector(String base64Image) async {
+  Future<bool> sendImageToTrainVector(String base64Image) async {
     final String endpointUrl = '${_apiConfig.baseEndpoint}/train-vector';
     print("TRAIN-VECTOR: $endpointUrl");
 
@@ -64,7 +64,7 @@ class ApiService {
         print('Image sent successfully');
         print('Server response: ${response.body}');
         final jsonResponse = jsonDecode(response.body);
-        return jsonResponse['processedImage'];
+        return true;
       } else {
         print(
             'Image send failed. Server responded with ${response.statusCode}');
