@@ -4,14 +4,33 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'theme_manager.dart';
 
 void main() async {
   await dotenv.load();
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late ThemeData _themeData;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTheme();
+  }
+
+  Future<void> _loadTheme() async {
+    _themeData = await ThemeManager.getTheme();
+    setState(() {}); // Actualiza el estado para que se aplique el tema
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +38,32 @@ class MyApp extends StatelessWidget {
     final endpointUrl = 'http://$serverIp:3000/process-image';
     return MaterialApp(
       title: 'Image Picker Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      theme: _themeData,
+      home: MyHomePage(
+        title: 'Image Picker Demo',
+        endpointUrl: endpointUrl,
+        onThemeChanged: _handleThemeChanged,
       ),
-      home: MyHomePage(title: 'Image Picker Demo', endpointUrl: endpointUrl),
     );
+  }
+
+  void _handleThemeChanged(bool isDarkMode) async {
+    await ThemeManager.setTheme(isDarkMode);
+    _loadTheme();
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title, required this.endpointUrl})
-      : super(key: key);
+ const MyHomePage({
+    Key? key,
+    required this.title,
+    required this.endpointUrl,
+    required this.onThemeChanged,
+  }) : super(key: key);
 
   final String title;
   final String endpointUrl;
+  final Function(bool) onThemeChanged;
 
   @override
   createState() => _MyHomePageState();
@@ -98,14 +129,22 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          Switch(
+            value: Theme.of(context).brightness == Brightness.dark,
+            onChanged: (value) {
+              widget.onThemeChanged(value);
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
       child: Column(
         children: <Widget>[
             AspectRatio(
-              aspectRatio: 1.0, // Proporción de aspecto cuadrado para _image
+              aspectRatio: 1.0,
               child: Center(
                 child: _image == null
                     ? const Text('No image selected.')
@@ -114,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 20),
             AspectRatio(
-              aspectRatio: 1.0, // Proporción de aspecto cuadrado para _serverImage
+              aspectRatio: 1.0,
               child: Center(
                 child: _serverImage == null
                     ? const Text('No processed image.')
