@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:employee_search_engine/api_service.dart';
+import 'package:employee_search_engine/theme_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'theme_manager.dart';
 
 void main() async {
   await dotenv.load();
@@ -19,7 +19,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late ThemeData _themeData;
+  ThemeData? _themeData;
 
   @override
   void initState() {
@@ -34,23 +34,28 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final serverIp = dotenv.env['SERVER_IP'] ?? '127.0.0.1';
-    final endpointUrl = 'http://$serverIp:3000/process-image';
+    final apiConfig = ApiConfig(
+      baseEndpoint: dotenv.env['BASE_ENDPOINT'] ?? 'http://127.0.0.1:3000',
+      processImageEndpoint: 'process-image',
+      trainVectorEndpoint: 'train-vector',
+    );
+
+    final apiService = ApiService(apiConfig);
+
     return MaterialApp(
       title: 'Employee Search Engine',
-      theme: _themeData.copyWith(
+      theme: _themeData?.copyWith(
         // Cambia el colorScheme para afectar los colores primarios y secundarios
-        colorScheme: _themeData.colorScheme.copyWith(
-          primary: const Color(0xFFB3D334),
-          secondary: const Color.fromARGB(255, 137, 170, 3)
-        ),
+        colorScheme: _themeData?.colorScheme.copyWith(
+            primary: const Color(0xFFB3D334),
+            secondary: const Color.fromARGB(255, 137, 170, 3)),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           splashColor: Color(0xFFB3D334), // Cambia el color de splash
         ),
       ),
       home: MyHomePage(
         title: 'Employee Search Engine',
-        endpointUrl: endpointUrl,
+        apiService: apiService,
         onThemeChanged: _handleThemeChanged,
       ),
     );
@@ -63,15 +68,15 @@ class _MyAppState extends State<MyApp> {
 }
 
 class MyHomePage extends StatefulWidget {
- const MyHomePage({
+  const MyHomePage({
     Key? key,
     required this.title,
-    required this.endpointUrl,
+    required this.apiService,
     required this.onThemeChanged,
   }) : super(key: key);
 
   final String title;
-  final String endpointUrl;
+  final ApiService apiService;
   final Function(bool) onThemeChanged;
 
   @override
@@ -89,56 +94,43 @@ class _MyHomePageState extends State<MyHomePage> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
-        _serverImage = null; // Reinicia la imagen del servidor al elegir una nueva imagen
+        _serverImage =
+            null; // Reinicia la imagen del servidor al elegir una nueva imagen
       });
 
       // Convert the image to base64
       final bytes = await _image!.readAsBytes();
       final base64Image = base64Encode(bytes);
 
-      // Send the base64-encoded image to the endpoint
-      await _sendImageToEndpoint(base64Image);
+      // Send the base64-encoded image to the process_image endpoint
+      final processedImageBase64 =
+          await widget.apiService.sendImageToProcessImage(base64Image);
+
+      // Decoding the processed image from base64 and displaying it
+      final processedImage = Image.memory(base64Decode(processedImageBase64));
+      setState(() {
+        _serverImage = processedImage;
+      });
     }
   }
 
-  Future<void> _sendImageToEndpoint(String base64Image) async {
-    print("VOY A ENVIAR UNA PETICION");
+  Future<void> _trainVector() async {
+    if (_image != null) {
+      // Convert the image to base64
+      final bytes = await _image!.readAsBytes();
+      final base64Image = base64Encode(bytes);
 
-    try {
-      final response = await http.post(
-        Uri.parse(widget.endpointUrl),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({'image': base64Image}),
-      );
-      print('Response: ${response}');
-      if (response.statusCode == 200) {
-        print('Image sent successfully');
-        print('Server response: ${response.body}');
-
-        // Extrae la cadena base64 de la imagen desde la respuesta JSON
-        final jsonResponse = jsonDecode(response.body);
-        final processedImageBase64 = jsonResponse['processedImage'];
-
-        // Decodifica la imagen en base64 y la muestra
-        setState(() {
-          _serverImage = Image.memory(base64Decode(processedImageBase64));
-        });
-      } else {
-        print(
-            'Image send failed. Server responded with ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error sending image: $error');
+      // Send the base64-encoded image to the train_vector endpoint
+      await widget.apiService.sendImageToTrainVector(base64Image);
+    } else {
+      print('No image selected.');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: AppBar(
+      appBar: AppBar(
         title: Row(
           children: [
             Image.asset(
@@ -149,7 +141,8 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(width: 8), // Espacio entre la imagen y el título
             Text(
               widget.title,
-              style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              style:
+                  const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -163,38 +156,38 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
+        child: Column(
+          children: <Widget>[
             AspectRatio(
               aspectRatio: 1.0,
               child: Center(
                 child: _image == null
                     ? const Text('No image selected.')
                     : Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text('Your photo:',
-                              style: TextStyle(
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 8),
-                          Expanded(
-                            child: Image.file(_image!),
-                          ),
-                        ],
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text('Your photo:',
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 8),
+                            Expanded(
+                              child: Image.file(_image!),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
               ),
             ),
             const SizedBox(height: 20),
             AspectRatio(
               aspectRatio: 1.0,
               child: Center(
-                child: _serverImage == null
-                    ? const SizedBox(height: 20)
-                    : Container(
+                  child: _serverImage == null
+                      ? const SizedBox(height: 20)
+                      : Container(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -216,18 +209,32 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                             ],
                           ),
-                        )
-              ),
+                        )),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _getImage,
-        tooltip: 'Pick Image',
-        foregroundColor: Colors.white,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: const Icon(Icons.add_a_photo),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          FloatingActionButton(
+            onPressed: _getImage,
+            tooltip: 'Pick Image',
+            foregroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: const Icon(Icons.add_a_photo),
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              // Add the logic for _trainVector
+              _trainVector();
+            },
+            tooltip: 'Train Vector',
+            foregroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+            child: const Icon(Icons.upload),
+          ),
+        ],
       ),
     );
   }
