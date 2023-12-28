@@ -37,10 +37,10 @@ class _MyAppState extends State<MyApp> {
     final serverIp = dotenv.env['SERVER_IP'] ?? '127.0.0.1';
     final endpointUrl = 'http://$serverIp:3000/process-image';
     return MaterialApp(
-      title: 'Image Picker Demo',
+      title: 'Employee Search Engine',
       theme: _themeData,
       home: MyHomePage(
-        title: 'Image Picker Demo',
+        title: 'Employee Search Engine',
         endpointUrl: endpointUrl,
         onThemeChanged: _handleThemeChanged,
       ),
@@ -138,7 +138,10 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 40,
             ),
             const SizedBox(width: 8), // Espacio entre la imagen y el título
-            Text(widget.title),
+            Text(
+              widget.title,
+              style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
         actions: [
