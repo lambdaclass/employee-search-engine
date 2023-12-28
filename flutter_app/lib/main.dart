@@ -280,8 +280,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           FloatingActionButton(
             onPressed: _getImage,
@@ -290,6 +291,7 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: const Color(0xFFB3D334),
             child: const Icon(Icons.add_a_photo),
           ),
+          const SizedBox(height: 16.0), // Ajusta el espacio entre los botones
           FloatingActionButton(
             onPressed: () {
               _trainVector();
