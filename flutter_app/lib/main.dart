@@ -46,8 +46,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Employee Search Engine',
       theme: _themeData?.copyWith(
-        colorScheme: _themeData?.colorScheme.copyWith(
-          secondary: const Color.fromARGB(255, 137, 170, 3)),
+        colorScheme: _themeData?.colorScheme
+            .copyWith(secondary: const Color.fromARGB(255, 137, 170, 3)),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           splashColor: Color(0xFFB3D334),
         ),
@@ -85,6 +85,21 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   File? _image;
   Image? _serverImage;
+
+  Future<void> _showModal(String message) async {
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            message,
+            style: const TextStyle(fontSize: 18.0),
+          ),
+        );
+      },
+    );
+  }
 
   Future<File?> _openGallery() async {
     final pickedFile =
@@ -125,10 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
           await widget.apiService.sendImageToTrainVector(base64Image);
 
       if (response) {
-        setState(() {
-          _image = pickedFile;
-          _serverImage = Image.file(pickedFile);
-        });
+        await _showModal('Added to the engine');
       }
     } else {
       print('No image selected.');
