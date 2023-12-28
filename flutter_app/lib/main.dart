@@ -170,7 +170,22 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Center(
                 child: _image == null
                     ? const Text('No image selected.')
-                    : Image.file(_image!),
+                    : Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Your photo:',
+                              style: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          Expanded(
+                            child: Image.file(_image!),
+                          ),
+                        ],
+                      ),
+                    ),
               ),
             ),
             const SizedBox(height: 20),
@@ -180,12 +195,28 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: _serverImage == null
                     ? const SizedBox(height: 20)
                     : Container(
-                        width: double.infinity,
-                        child: FittedBox(
-                          fit: BoxFit.contain,
-                          child: _serverImage!,
-                        ),
-                      ),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                  'You are this LambdaClass employee:',
+                                  style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 8),
+                              Expanded(
+                                child: Container(
+                                  width: double.infinity,
+                                  child: FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: _serverImage!,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
               ),
             ),
           ],
