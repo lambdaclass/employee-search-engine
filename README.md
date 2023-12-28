@@ -10,7 +10,7 @@ You can check its behavior in this [video](https://www.youtube.com/shorts/d_Hh2S
 
 ## Architecture
 
-[TODO]
+![architecture](./architecture/xployee_architecture.png)
 
 ## Requirements
 
