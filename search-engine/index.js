@@ -1,9 +1,9 @@
 import app, { client } from "./app.js";
 
-import { readFileSync, readdirSync, writeFileSync} from "fs"
+import { readFileSync, readdirSync, writeFileSync } from "fs"
 
 // Create a schema that contains an image property.
-async function createSchema () {
+async function createSchema() {
     const schemaConfig = {
         'class': 'Employee',
         'vectorizer': "img2vec-neural",
@@ -33,7 +33,7 @@ async function createSchema () {
         .do();
 }
 
-async function deleteSchema () {
+async function deleteSchema() {
 
     await client.schema
         .classDeleter()
@@ -42,19 +42,19 @@ async function deleteSchema () {
 
 }
 
-async function trainAllLocalImages () {
+async function trainAllLocalImages() {
     const imgs = readdirSync('./img')
 
     const promises = imgs.map((async (img) => {
         const b64 = Buffer.from(readFileSync(`./img/${img}`)).toString('base64')
         await client.data
-        .creator()
-        .withClassName('Employee')
-        .withProperties({
-            image: b64,
-            text: img.split('.')[0].split('_').join(' ')
-        })
-        .do();
+            .creator()
+            .withClassName('Employee')
+            .withProperties({
+                image: b64,
+                text: img.split('.')[0].split('_').join(' ')
+            })
+            .do();
     }))
 
     await Promise.all(promises)
@@ -67,8 +67,8 @@ as a query input. The database will use HNSW to quickly
 find similar looking images.
 */
 
-async function test () {
-    const test = Buffer.from( readFileSync('./test.png') ).toString('base64');
+async function test() {
+    const test = Buffer.from(readFileSync('./test.png')).toString('base64');
 
     const resImage = await client.graphql.get()
         .withClassName('Employee')
