@@ -45,12 +45,10 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Employee Search Engine',
       theme: _themeData?.copyWith(
-        // Cambia el colorScheme para afectar los colores primarios y secundarios
         colorScheme: _themeData?.colorScheme.copyWith(
-            primary: const Color(0xFFB3D334),
-            secondary: const Color.fromARGB(255, 137, 170, 3)),
+          secondary: const Color.fromARGB(255, 137, 170, 3)),
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          splashColor: Color(0xFFB3D334), // Cambia el color de splash
+          splashColor: Color(0xFFB3D334),
         ),
       ),
       home: MyHomePage(
@@ -149,6 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: [
           Switch(
             value: Theme.of(context).brightness == Brightness.dark,
+            activeColor: const Color(0xFFB3D334),
             onChanged: (value) {
               widget.onThemeChanged(value);
             },
@@ -221,7 +220,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: _getImage,
             tooltip: 'Pick Image',
             foregroundColor: Colors.white,
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: const Color(0xFFB3D334),
             child: const Icon(Icons.add_a_photo),
           ),
           FloatingActionButton(
@@ -231,7 +230,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             tooltip: 'Train Vector',
             foregroundColor: Colors.white,
-            backgroundColor: Theme.of(context).colorScheme.secondary,
+            backgroundColor: const Color(0xFFB3D334),
             child: const Icon(Icons.upload),
           ),
         ],
