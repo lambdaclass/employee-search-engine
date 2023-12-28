@@ -178,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
               aspectRatio: 1.0,
               child: Center(
                 child: _serverImage == null
-                    ? const Text('No processed image.')
+                    ? const SizedBox(height: 20)
                     : Container(
                         width: double.infinity,
                         child: FittedBox(
