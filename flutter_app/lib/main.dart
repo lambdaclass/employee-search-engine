@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'package:employee_search_engine/api_service.dart';
 import 'package:employee_search_engine/theme_manager.dart';
@@ -87,26 +88,27 @@ class _MyHomePageState extends State<MyHomePage> {
   File? _image;
   Image? _serverImage;
 
-  Future<void> _getImage() async {
+  Future<File?> _openGallery() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
+    return pickedFile != null ? File(pickedFile.path) : null;
+  }
+
+  Future<void> _getImage() async {
+    final pickedFile = await _openGallery();
 
     if (pickedFile != null) {
       setState(() {
-        _image = File(pickedFile.path);
-        _serverImage =
-            null; // Reinicia la imagen del servidor al elegir una nueva imagen
+        _image = pickedFile;
+        _serverImage = null;
       });
 
-      // Convert the image to base64
       final bytes = await _image!.readAsBytes();
       final base64Image = base64Encode(bytes);
 
-      // Send the base64-encoded image to the process_image endpoint
       final processedImageBase64 =
           await widget.apiService.sendImageToProcessImage(base64Image);
 
-      // Decoding the processed image from base64 and displaying it
       final processedImage = Image.memory(base64Decode(processedImageBase64));
       setState(() {
         _serverImage = processedImage;
@@ -115,13 +117,21 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _trainVector() async {
-    if (_image != null) {
-      // Convert the image to base64
-      final bytes = await _image!.readAsBytes();
+    final pickedFile = await _openGallery();
+
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
       final base64Image = base64Encode(bytes);
 
-      // Send the base64-encoded image to the train_vector endpoint
-      await widget.apiService.sendImageToTrainVector(base64Image);
+      final response =
+          await widget.apiService.sendImageToTrainVector(base64Image);
+
+      if (response) {
+        setState(() {
+          _image = pickedFile;
+          _serverImage = Image.file(pickedFile);
+        });
+      }
     } else {
       print('No image selected.');
     }
