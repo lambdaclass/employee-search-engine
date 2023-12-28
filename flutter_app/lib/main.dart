@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _loadTheme() async {
     _themeData = await ThemeManager.getTheme();
-    setState(() {}); // Actualiza el estado para que se aplique el tema
+    setState(() {});
   }
 
   @override
@@ -37,10 +37,19 @@ class _MyAppState extends State<MyApp> {
     final serverIp = dotenv.env['SERVER_IP'] ?? '127.0.0.1';
     final endpointUrl = 'http://$serverIp:3000/process-image';
     return MaterialApp(
-      title: 'Image Picker Demo',
-      theme: _themeData,
+      title: 'Employee Search Engine',
+      theme: _themeData.copyWith(
+        // Cambia el colorScheme para afectar los colores primarios y secundarios
+        colorScheme: _themeData.colorScheme.copyWith(
+          primary: const Color(0xFFB3D334),
+          secondary: const Color.fromARGB(255, 137, 170, 3)
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          splashColor: Color(0xFFB3D334), // Cambia el color de splash
+        ),
+      ),
       home: MyHomePage(
-        title: 'Image Picker Demo',
+        title: 'Employee Search Engine',
         endpointUrl: endpointUrl,
         onThemeChanged: _handleThemeChanged,
       ),
@@ -130,7 +139,20 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
        appBar: AppBar(
-        title: Text(widget.title),
+        title: Row(
+          children: [
+            Image.asset(
+              'assets/lc_logo.png',
+              width: 40,
+              height: 40,
+            ),
+            const SizedBox(width: 8), // Espacio entre la imagen y el título
+            Text(
+              widget.title,
+              style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
         actions: [
           Switch(
             value: Theme.of(context).brightness == Brightness.dark,
@@ -172,6 +194,8 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _getImage,
         tooltip: 'Pick Image',
+        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add_a_photo),
       ),
     );

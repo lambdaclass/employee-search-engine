@@ -1,4 +1,4 @@
-name: flutter_app
+name: employee_search_engine
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -64,6 +64,12 @@ flutter:
 
   assets:
     - .env
+    - assets/
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/lc_logo.png"
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
