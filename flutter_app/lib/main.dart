@@ -38,7 +38,16 @@ class _MyAppState extends State<MyApp> {
     final endpointUrl = 'http://$serverIp:3000/process-image';
     return MaterialApp(
       title: 'Employee Search Engine',
-      theme: _themeData,
+      theme: _themeData.copyWith(
+        // Cambia el colorScheme para afectar los colores primarios y secundarios
+        colorScheme: _themeData.colorScheme.copyWith(
+          primary: const Color(0xFFB3D334),
+          secondary: const Color.fromARGB(255, 137, 170, 3)
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          splashColor: Color(0xFFB3D334), // Cambia el color de splash
+        ),
+      ),
       home: MyHomePage(
         title: 'Employee Search Engine',
         endpointUrl: endpointUrl,
@@ -185,6 +194,8 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _getImage,
         tooltip: 'Pick Image',
+        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add_a_photo),
       ),
     );
